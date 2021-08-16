@@ -1,0 +1,210 @@
+-- File:    .conkyrc
+-- Descpription: A simple conky configuration file that presents various system information.  Note that for
+--               complicated display lines the use of templates was done.  
+--
+-- Copyright 2021, David Hunter
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+-- documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
+-- and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+-- 
+-- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-- 
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+-- LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+-- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+-- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+-- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-- 
+conky.config = {
+    alignment = 'top_right',
+    border_width = 0,                 
+    background = false,                  -- Do not run in the background (change if run at system startup)
+    format_human_readable = true,
+
+    cpu_avg_samples = 3,
+    net_avg_samples = 3,
+    update_interval = 1.0,
+    update_interval_on_battery = 10.0,    -- When on battery power don't sample as often
+   
+    default_color = 'white',              -- Use for default text
+    color1 = 'gold',                     -- Used for headers
+    color2 = 'bisque',                   -- Used for headers within sections
+    default_outline_color = 'grey',
+    default_shade_color = 'grey',
+
+    double_buffer = true,
+    draw_borders = false,
+    draw_graph_borders = false,          
+    draw_outline = false,
+    draw_shades = false,
+    extra_newline = false,
+
+    font = 'Monospace:size=7',    -- default font
+    font1 = 'Monospace:size=8',  -- Used for section headers
+
+    gap_x = 25,                          -- Gap from edge 
+    gap_y = 10,                          -- Gap from bottom or top
+    no_buffers = true,
+    out_to_console = false,
+    out_to_ncurses = false,
+    out_to_stderr = false,
+    out_to_x = true,
+
+    own_window = true,
+    own_window_hints = "undecorated, below, sticky, skip_taskbar, skip_pager",
+    own_window_class = 'Conky',
+    own_window_transparent = true,       -- no background image
+    own_window_argb_visual = true,
+    own_window_argb_value = 0,
+    own_window_type = 'normal',
+    
+    short_units = true,
+    show_graph_range = false,
+    show_graph_scale = false,
+    stippled_borders = 0,
+    uppercase = false,                   -- Allow both case for text
+    lowercase = false,                   -- Allow both case for text
+    use_spacer = 'none',
+    use_xft = true,
+
+    temperature_unit = "celsius",
+    top_cpu_separate = false,           -- Top procs is for all cpus combined
+    top_name_verbose = true,            -- Show full command
+    top_name_width = 25,
+
+    if_up_strictness = address,         -- Net interface must have an IP address assigned
+
+    -- Load custom LUA scripts
+    lua_load = "/home/dph/conky_myscripts.lua",
+
+    -- Display CPU information
+    template0 = [[${goto 10}\1 ${goto 50}${freq_g \2} ${goto 125}${hwmon 4 temp \3}°C${goto 200}${cpu \2}% ${alignr}${cpugraph \2 10, 125 7171C6 DC143C -l -t}]],
+    
+    -- Displaying vnstats for interface
+    template1 = [[${color}${goto 10}\1 ${goto 125}${execi 300 vnstat -i \1 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}'} ${goto 180}${execi 300 vnstat -i \1 | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}'} ${goto 225}${execi 300 vnstat -i \1 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}'} ${goto 300}${execi 300 vnstat -i \1 -m | grep "`date +"%Y-%m"`" | awk '{print $8" "substr ($9, 1, 1)}'}]],
+    
+    -- Display top n CPU process 
+    template2 = [[${color}${goto 10}${top name \1} ${goto 170}${top pid \1} ${goto 215}${top cpu \1}% ${goto 260}${top mem 1}% ${goto 315}${top io_perc \1}%]],
+    
+    -- Display top n Memory process
+    template3 = [[${color}${goto 10}${top_mem name \1} ${goto 170}${top_mem pid \1} ${goto 215}${top_mem cpu \1}% ${goto 260}${top_mem mem \1}% ${goto 315}${top_mem io_perc \1}%]],
+    
+    -- Display n filesystem information
+    template4 = [[${color}${goto 10}\1 ${goto 175}${fs_type \1} ${goto 225}${fs_size \1} ${goto 275}${fs_used \1} ${goto 325}${fs_free_perc \1}%]],
+    
+    -- Display n disk information
+    template5 = [[${goto 10}\1 ${goto 75}${diskio_read \1}${goto 100}${diskiograph_read \1 10, 50 DC143C 7171C6 -l}${goto 150}${diskio_write \1}${goto 190}${diskiograph_write \1 10, 50 DC143C 7171C6 -t -l} ${goto 250}${diskio \1}${goto 300}${diskiograph \1 10, 50 DC143C 7171C6 -t -l}]],
+    
+    -- Display top n I/O process 
+    template6 = [[${color}${goto 10}${top_io name \1} ${goto 170}${top_io pid \1} ${goto 215}${top_io cpu \1}% ${goto 260}${top_io mem 1}% ${goto 315}${top_io io_perc \1}%]],
+    
+    -- Section header formatting (note only single words are supported)
+    template7 = [[${color1}${font1}\1 ${hr}${color}${font}]]
+
+};
+
+conky.text = [[
+#
+# Generate general system information
+#
+${template7 System}
+${goto 10}Hostname:${alignr}$nodename - User: ${alignr} ${execi 65000 env | grep LOGNAME | cut -d'=' -f2-}
+${goto 10}Arch:${alignr} ${machine} - Kernel:${alignr} ${kernel}
+${goto 10}CPU:${alignr} ${execi 65000 grep model /proc/cpuinfo | cut -d : -f2 | tail -1 | sed 's/\s//'}
+${goto 10}Operating Sytem: ${alignr} ${sysname} - ${execi 65000 lsb_release -d | awk '{print $2 " " $3}'}
+${goto 10}AC Power: ${acpiacadapter} ${alignr} Battery Charge: ${battery_percent}% 
+${goto 10}ACPI Temp: ${alignr} ${acpitemp}°C
+${goto 10}Uptime: $uptime ${alignr} Load: ${loadavg}
+${goto 10}Processes: ${processes} ${alignr} Processes Running: ${running_processes}
+#
+# If there is an nvidia device, monitor it (TODO: (dph)should do an if_exists on this)
+#
+${template7 Graphics}
+${color}${goto 10}Model: ${execi 65000 nvidia-smi --query-gpu="name" --format=csv,noheader} ${alignr}Driver Version: ${alignr} ${execi 65000 nvidia-smi --query-gpu="driver_version" --format=csv,noheader}
+${goto 10}Temp: ${nvidia temp}°C ${goto 125}GPU Freq: ${nvidia gpufreq}Mhz ${goto 250}Mem Freq: ${nvidia memfreq}Mhz
+${goto 10}${nvidiagraph gputemp 10, 100 171C6 DC143C -t -l 0} ${goto 125}${nvidiagraph gpuutil 10, 100 171C6 DC143C -t -l 0} ${goto 250}${nvidiagraph memutil 10, 100 171C6 DC143C -t -l 0}
+#
+# General CPU Information
+${template7 CPU}
+${color2}${goto 10}CPU ${goto 50}Freq ${goto 125}Temp ${goto 200}Usage${color}
+${template0 1 cpu1 2}
+${template0 2 cpu2 3}
+${template0 3 cpu3 4}
+${template0 4 cpu4 5}
+${template0 ALL cpu0 1}
+#
+# Memory information
+${template7 Memory}
+${color2}${goto 10}Max ${goto 55}Used ${goto 100}Free ${goto 150}Swap ${goto 200}Usage${color}
+${goto 10}${memmax} ${goto 55}${mem} ${goto 100}${memfree} ${goto 150}${swapmax} ${goto 200}${memperc}% ${memgraph 10, 150 7171C6 DC143C -l -t}
+#
+# Monitor disks
+${template7 Disks}
+${color2}${goto 10}Device ${goto 75}Read ${goto 150}Write ${goto 250}I/O${color}
+${template5 /dev/sda}
+${template5 /dev/sdb}
+${template5 /dev/sdc}
+#
+# Monitor any mounted file systems
+${template7 File_Systems}
+${color2}${goto 10}File System ${goto 175}Type ${goto 225}Size ${goto 275}Used ${goto 325}Free 
+${template4 /}
+${template4 /home}
+${template4 /ISO}
+${template4 /netshare/development}
+#${color}${alignr} ${execp /home/dph/disks.sh}
+#
+# Monitor any connected networks -- these are not autodiscovred
+${template7 Network}
+${color}${goto 10}Gateway: ${gw_ip} ${goto 225}DNS Server: ${nameserver}
+#
+# If connected via wireless, monitor wlp2s0 (default)
+${if_up wlp2s0}${color}${goto 10}Wireless (wlp2s0):${goto 130}${addrs wlp2s0} ${goto 225}SSID: ${wireless_essid wlp2s0}
+${goto 10}Mode: ${wireless_mode wlp2s0} ${goto 100}BitRate: ${wireless_bitrate wlp2s0} ${goto 225}Link Quality: ${wireless_link_qual_perc wlp2s0}%
+${goto 10}Upload: ${upspeed wlp2s0} ${alignr} ${goto 225}Download: ${downspeed wlp2s0}
+${goto 10}${upspeedgraph wlp2s0 10, 150 7171C6 DC143C -l -t} ${goto 225}${downspeedgraph wlp2s0 10, 125 7171C6 DC143C -l -t}${endif}
+${if_up enx001fb52699ab}${color}${goto 10}Hub Wired Mode (enx001fb52699ab) ${goto 225}${addrs enx001fb52699ab}
+${goto 10}Upload: ${upspeed enx001fb52699ab} ${goto 225}Download ${downspeed enx001fb52699ab}
+${goto 10}${upspeedgraph enx001fb52699ab 10, 150 7171C6 DC143C -l -t} ${goto 225}${downspeedgraph enx001fb52699ab 10, 125 7171C6 DC143C -l -t}${endif}
+${if_up enp0s31f6}${color}${goto 10}Wired Mode (enp0s31f6) ${goto 225}${addrs enp0s31f6}
+${goto 10}Upload: ${upspeed enp0s31f6} ${goto 225}Download ${downspeed enp0s31f6}
+${goto 10}${upspeedgraph enp0s31f6 10, 150 7171C6 DC143C -l -t} ${goto 225}${downspeedgraph enp0s31f6 10, 125 7171C6 DC143C -l -t}${endif}
+#
+# Show vnstats for all the configured networks -- these are not autodiscovred
+${color1}${font1}Total Network Traffic via vnstat $hr ${color2}${font}
+${goto 10}Interface${goto 125}Today${goto 175}Yesterday${goto 250}Week${goto 300}Month
+${template1 wlp2s0}
+${template1 enx001fb52699ab}
+${template1 enp0s31f6}
+#
+# Show the top 5 processes for CPU, Memory and I/O
+${color1}${font1}Top CPU Processes $hr${color2}${font}
+${goto 10}NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
+${template2 1}
+${template2 2}
+${template2 3}
+${template2 4}
+${template2 5}
+${template2 6}
+${template2 7}
+${color1}${font1}Top Memory Processes $hr${color2}${font}
+${goto 10}NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
+${template3 1}
+${template3 2}
+${template3 3}
+${template3 4}
+${template3 5}
+${template3 6}
+${template3 7}
+${color1}${font1}Top I/O Processes $hr${color2}${font}
+${goto 10}NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
+${template6 1}
+${template6 2}
+${template6 3}
+${template6 4}
+${template6 5}
+${template6 6}
+${template6 7}
+]];
