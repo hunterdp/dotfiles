@@ -20,7 +20,7 @@
 conky.config = {
     alignment = 'top_right',
     border_width = 0,                 
-    background = false,                  -- Do not run in the background (change if run at system startup)
+    background = true,                  -- Do not run in the background (change if run at system startup)
     format_human_readable = true,
 
     cpu_avg_samples = 3,
@@ -77,10 +77,10 @@ conky.config = {
     if_up_strictness = address,         -- Net interface must have an IP address assigned
 
     -- Load custom LUA scripts
-    lua_load = "/home/dph/conky_myscripts.lua",
+    -- lua_load = "/home/dph/conky_myscripts.lua",
 
     -- Display CPU information
-    template0 = [[${goto 10}\1 ${goto 50}${freq_g \2} ${goto 125}${hwmon 4 temp \3}°C${goto 200}${cpu \2}% ${alignr}${cpugraph \2 10, 125 7171C6 DC143C -l -t}]],
+    template0 = [[${goto 10}\1 ${goto 50}${freq_g \2} ${goto 125}${hwmon 4 temp \3}°C${goto 200}${cpu \2}% ${alignr}${template9 cpugraph \2 10 125}]],
     
     -- Displaying vnstats for interface
     template1 = [[${color}${goto 10}\1 ${goto 125}${execi 300 vnstat -i \1 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}'} ${goto 180}${execi 300 vnstat -i \1 | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}'} ${goto 225}${execi 300 vnstat -i \1 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}'} ${goto 300}${execi 300 vnstat -i \1 -m | grep "`date +"%Y-%m"`" | awk '{print $8" "substr ($9, 1, 1)}'}]],
@@ -95,13 +95,19 @@ conky.config = {
     template4 = [[${color}${goto 10}\1 ${goto 175}${fs_type \1} ${goto 225}${fs_size \1} ${goto 275}${fs_used \1} ${goto 325}${fs_free_perc \1}%]],
     
     -- Display n disk information
-    template5 = [[${goto 10}\1 ${goto 75}${diskio_read \1}${goto 100}${diskiograph_read \1 10, 50 DC143C 7171C6 -l}${goto 150}${diskio_write \1}${goto 190}${diskiograph_write \1 10, 50 DC143C 7171C6 -t -l} ${goto 250}${diskio \1}${goto 300}${diskiograph \1 10, 50 DC143C 7171C6 -t -l}]],
+    template5 = [[${goto 10}\1 ${goto 75}${diskio_read \1}${goto 100}${template9 diskiograph_read \1 10 50}${goto 150}${diskio_write \1}${goto 190}${template9 diskiograph_write \1 10 50} ${goto 250}${diskio \1}${goto 300}${template9 diskiograph \1 10 50}]],
     
     -- Display top n I/O process 
     template6 = [[${color}${goto 10}${top_io name \1} ${goto 170}${top_io pid \1} ${goto 215}${top_io cpu \1}% ${goto 260}${top_io mem 1}% ${goto 315}${top_io io_perc \1}%]],
     
     -- Section header formatting (note only single words are supported)
-    template7 = [[${color1}${font1}\1 ${hr}${color}${font}]]
+    template7 = [[${color1}${font1}\1 ${hr}${color}${font}]],
+
+    -- 
+    --template8 = [[]],
+
+    -- Common Colors for Graphing template
+    template9 = [[${\1 \2 \3, \4 006400 8B0000 -t}]],
 
 };
 
@@ -114,7 +120,8 @@ ${goto 10}Hostname:${alignr}$nodename - User: ${alignr} ${execi 65000 env | grep
 ${goto 10}Arch:${alignr} ${machine} - Kernel:${alignr} ${kernel}
 ${goto 10}CPU:${alignr} ${execi 65000 grep model /proc/cpuinfo | cut -d : -f2 | tail -1 | sed 's/\s//'}
 ${goto 10}Operating Sytem: ${alignr} ${sysname} - ${execi 65000 lsb_release -d | awk '{print $2 " " $3}'}
-${goto 10}AC Power: ${acpiacadapter} ${alignr} Battery Charge: ${battery_percent}% 
+${goto 10}AC Power: ${acpiacadapter} ${alignr} Battery Charge: ${battery_percent}%
+${goto 10}Battery Time Remaining: ${alignr}${execi 30 upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep 'time to' | awk '{print $4 " " $5}'}
 ${goto 10}ACPI Temp: ${alignr} ${acpitemp}°C
 ${goto 10}Uptime: $uptime ${alignr} Load: ${loadavg}
 ${goto 10}Processes: ${processes} ${alignr} Processes Running: ${running_processes}
@@ -124,7 +131,7 @@ ${goto 10}Processes: ${processes} ${alignr} Processes Running: ${running_process
 ${template7 Graphics}
 ${color}${goto 10}Model: ${execi 65000 nvidia-smi --query-gpu="name" --format=csv,noheader} ${alignr}Driver Version: ${alignr} ${execi 65000 nvidia-smi --query-gpu="driver_version" --format=csv,noheader}
 ${goto 10}Temp: ${nvidia temp}°C ${goto 125}GPU Freq: ${nvidia gpufreq}Mhz ${goto 250}Mem Freq: ${nvidia memfreq}Mhz
-${goto 10}${nvidiagraph gputemp 10, 100 171C6 DC143C -t -l 0} ${goto 125}${nvidiagraph gpuutil 10, 100 171C6 DC143C -t -l 0} ${goto 250}${nvidiagraph memutil 10, 100 171C6 DC143C -t -l 0}
+${goto 10} ${template9 nvidiagraph gputemp 20 100} ${goto 125}${template9 nvidiagraph gpuutil 20 100} ${goto 250}${template9 nvidiagraph memutil 20 100}
 #
 # General CPU Information
 ${template7 CPU}
@@ -164,13 +171,13 @@ ${color}${goto 10}Gateway: ${gw_ip} ${goto 225}DNS Server: ${nameserver}
 ${if_up wlp2s0}${color}${goto 10}Wireless (wlp2s0):${goto 130}${addrs wlp2s0} ${goto 225}SSID: ${wireless_essid wlp2s0}
 ${goto 10}Mode: ${wireless_mode wlp2s0} ${goto 100}BitRate: ${wireless_bitrate wlp2s0} ${goto 225}Link Quality: ${wireless_link_qual_perc wlp2s0}%
 ${goto 10}Upload: ${upspeed wlp2s0} ${alignr} ${goto 225}Download: ${downspeed wlp2s0}
-${goto 10}${upspeedgraph wlp2s0 10, 150 7171C6 DC143C -l -t} ${goto 225}${downspeedgraph wlp2s0 10, 125 7171C6 DC143C -l -t}${endif}
+${goto 10}${template9 upspeedgraph wlp2s0 20 150} ${goto 225}${template9 downspeedgraph wlp2s0 20 125}${endif}
 ${if_up enx001fb52699ab}${color}${goto 10}Hub Wired Mode (enx001fb52699ab) ${goto 225}${addrs enx001fb52699ab}
 ${goto 10}Upload: ${upspeed enx001fb52699ab} ${goto 225}Download ${downspeed enx001fb52699ab}
-${goto 10}${upspeedgraph enx001fb52699ab 10, 150 7171C6 DC143C -l -t} ${goto 225}${downspeedgraph enx001fb52699ab 10, 125 7171C6 DC143C -l -t}${endif}
+${goto 10}${template9 upspeedgraph enx001fb52699ab 20 150} ${goto 225}${template9 downspeedgraph enx001fb52699ab 20 125}${endif}
 ${if_up enp0s31f6}${color}${goto 10}Wired Mode (enp0s31f6) ${goto 225}${addrs enp0s31f6}
 ${goto 10}Upload: ${upspeed enp0s31f6} ${goto 225}Download ${downspeed enp0s31f6}
-${goto 10}${upspeedgraph enp0s31f6 10, 150 7171C6 DC143C -l -t} ${goto 225}${downspeedgraph enp0s31f6 10, 125 7171C6 DC143C -l -t}${endif}
+${goto 10}${template9 upspeedgraph enp0s31f6 20 150} ${goto 225}${template9 downspeedgraph enp0s31f6 20 125}${endif}
 #
 # Show vnstats for all the configured networks -- these are not autodiscovred
 ${color1}${font1}Total Network Traffic via vnstat $hr ${color2}${font}
