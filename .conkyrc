@@ -20,17 +20,17 @@
 conky.config = {
     alignment = 'top_right',
     border_width = 0,                 
-    background = true,                  -- Do not run in the background (change if run at system startup)
+    background = true,                      -- Do not run in the background (change if run at system startup)
     format_human_readable = true,
 
     cpu_avg_samples = 3,
     net_avg_samples = 3,
     update_interval = 1.0,
-    update_interval_on_battery = 10.0,    -- When on battery power don't sample as often
+    update_interval_on_battery = 10.0,      -- When on battery power don't sample as often
    
-    default_color = 'white',              -- Use for default text
-    color1 = 'gold',                     -- Used for headers
-    color2 = 'bisque',                   -- Used for headers within sections
+    default_color = 'white',                -- Use for default text
+    color1 = 'gold',                        -- Used for headers
+    color2 = 'bisque',                      -- Used for headers within sections
     default_outline_color = 'grey',
     default_shade_color = 'grey',
 
@@ -41,11 +41,11 @@ conky.config = {
     draw_shades = false,
     extra_newline = false,
 
-    font = 'Monospace:size=7',    -- default font
-    font1 = 'Monospace:size=8',  -- Used for section headers
+    font = 'Monospace:size=7',              -- default font
+    font1 = 'Monospace:size=8',             -- Used for section headers
 
-    gap_x = 25,                          -- Gap from edge 
-    gap_y = 10,                          -- Gap from bottom or top
+    gap_x = 25,                             -- Gap from edge 
+    gap_y = 10,                             -- Gap from bottom or top
     no_buffers = true,
     out_to_console = false,
     out_to_ncurses = false,
@@ -121,7 +121,8 @@ ${goto 10}Arch:${alignr} ${machine} - Kernel:${alignr} ${kernel}
 ${goto 10}CPU:${alignr} ${execi 65000 grep model /proc/cpuinfo | cut -d : -f2 | tail -1 | sed 's/\s//'}
 ${goto 10}Operating Sytem: ${alignr} ${sysname} - ${execi 65000 lsb_release -d | awk '{print $2 " " $3}'}
 ${goto 10}AC Power: ${acpiacadapter} ${alignr} Battery Charge: ${battery_percent}%
-${goto 10}Battery Time Remaining: ${alignr}${execi 30 upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep 'time to' | awk '{print $4 " " $5}'}
+#${goto 10}Battery Time Remaining: ${alignr}${execi 30 upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep 'time to' | awk '{print $4 " " $5}'}
+${goto 10}Battery Stauts: ${battery_short} ${alignr}Time Remaining: ${battery_time}
 ${goto 10}ACPI Temp: ${alignr} ${acpitemp}°C
 ${goto 10}Uptime: $uptime ${alignr} Load: ${loadavg}
 ${goto 10}Processes: ${processes} ${alignr} Processes Running: ${running_processes}
