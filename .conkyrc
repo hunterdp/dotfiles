@@ -161,7 +161,8 @@ ${color2}${goto 10}File System ${goto 175}Type ${goto 225}Size ${goto 275}Used $
 ${template4 /}
 ${template4 /home}
 ${template4 /ISO}
-${template4 /netshare/development}
+${template4 /media/dph/DPH}
+${template4 /media/dph/SSD\ Backup}
 #${color}${alignr} ${execp /home/dph/disks.sh}
 #
 # Monitor any connected networks -- these are not autodiscovred
