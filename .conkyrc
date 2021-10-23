@@ -18,15 +18,15 @@
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -- 
 conky.config = {
-    alignment = 'top_right',
+    alignment = 'bottom_right',
     border_width = 0,                 
     background = true,                      -- Do not run in the background (change if run at system startup)
     format_human_readable = true,
 
     cpu_avg_samples = 3,
     net_avg_samples = 3,
-    update_interval = 1.0,
-    update_interval_on_battery = 10.0,      -- When on battery power don't sample as often
+    update_interval = 5.0,                  -- Adjust to your preference (in seconds)
+    update_interval_on_battery = 30.0,      -- When on battery power don't sample as often
    
     default_color = 'white',                -- Use for default text
     color1 = 'gold',                        -- Used for headers
@@ -50,7 +50,7 @@ conky.config = {
     out_to_console = false,
     out_to_ncurses = false,
     out_to_stderr = false,
-    out_to_x = true,
+    out_to_x = true, 
 
     own_window = true,
     own_window_hints = "undecorated, below, sticky, skip_taskbar, skip_pager",
@@ -77,34 +77,34 @@ conky.config = {
     if_up_strictness = address,         -- Net interface must have an IP address assigned
 
     -- Load custom LUA scripts
-    -- lua_load = "/home/dph/conky_myscripts.lua",
+    -- lua_load = '/home/dph/.config/conky_myscripts.lua',
 
     -- Display CPU information
-    template0 = [[${goto 10}\1 ${goto 50}${freq_g \2} ${goto 125}${hwmon 4 temp \3}°C${goto 200}${cpu \2}% ${alignr}${template9 cpugraph \2 10 125}]],
+    template0 = [[\1 ${goto 50}${freq_g \2} ${goto 125}${exec sensors | grep '\3 \4' | cut -c17-23}${goto 200}${cpu \2}% ${alignr}${template9 cpugraph \2 10 125}]],
     
     -- Displaying vnstats for interface
-    template1 = [[${color}${goto 10}\1 ${goto 125}${execi 300 vnstat -i \1 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}'} ${goto 180}${execi 300 vnstat -i \1 | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}'} ${goto 225}${execi 300 vnstat -i \1 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}'} ${goto 300}${execi 300 vnstat -i \1 -m | grep "`date +"%Y-%m"`" | awk '{print $8" "substr ($9, 1, 1)}'}]],
+    template1 = [[${color}\1 ${goto 125}${execi 300 vnstat -i \1 | grep "today" | awk '{print $8" "substr ($9, 1, 1)}'} ${goto 180}${execi 300 vnstat -i \1 | grep "yesterday" | awk '{print $8" "substr ($9, 1, 1)}'} ${goto 225}${execi 300 vnstat -i \1 -w | grep "current week" | awk '{print $9" "substr ($10, 1, 1)}'} ${goto 300}${execi 300 vnstat -i \1 -m | grep "`date +"%Y-%m"`" | awk '{print $8" "substr ($9, 1, 1)}'}]],
     
     -- Display top n CPU process 
-    template2 = [[${color}${goto 10}${top name \1} ${goto 170}${top pid \1} ${goto 215}${top cpu \1}% ${goto 260}${top mem 1}% ${goto 315}${top io_perc \1}%]],
+    template2 = [[${color}${top name \1} ${goto 170}${top pid \1} ${goto 215}${top cpu \1}% ${goto 260}${top mem 1}% ${goto 315}${top io_perc \1}%]],
     
     -- Display top n Memory process
-    template3 = [[${color}${goto 10}${top_mem name \1} ${goto 170}${top_mem pid \1} ${goto 215}${top_mem cpu \1}% ${goto 260}${top_mem mem \1}% ${goto 315}${top_mem io_perc \1}%]],
+    template3 = [[${color}${top_mem name \1} ${goto 170}${top_mem pid \1} ${goto 215}${top_mem cpu \1}% ${goto 260}${top_mem mem \1}% ${goto 315}${top_mem io_perc \1}%]],
     
-    -- Display n filesystem information
-    template4 = [[${color}${goto 10}\1 ${goto 175}${fs_type \1} ${goto 225}${fs_size \1} ${goto 275}${fs_used \1} ${goto 325}${fs_free_perc \1}%]],
-    
+    -- Display wireless ethernet connections
+    template4 = [[${if_up \1}${color} SSID: ${wireless_essid \1}${goto 225}Mode: ${wireless_mode wlp1s0}\n BitRate: ${wireless_bitrate wlp1s0} ${goto 225}Link Quality: ${wireless_link_qual_perc wlp1s0}%${endif}]],
+
     -- Display n disk information
-    template5 = [[${goto 10}\1 ${goto 75}${diskio_read \1}${goto 100}${template9 diskiograph_read \1 10 50}${goto 150}${diskio_write \1}${goto 190}${template9 diskiograph_write \1 10 50} ${goto 250}${diskio \1}${goto 300}${template9 diskiograph \1 10 50}]],
+    template5 = [[\1 ${goto 75}${diskio_read \1}${goto 100}${template9 diskiograph_read \1 10 50}${goto 150}${diskio_write \1}${goto 190}${template9 diskiograph_write \1 10 50} ${goto 250}${diskio \1}${goto 300}${template9 diskiograph \1 10 50}]],
     
     -- Display top n I/O process 
-    template6 = [[${color}${goto 10}${top_io name \1} ${goto 170}${top_io pid \1} ${goto 215}${top_io cpu \1}% ${goto 260}${top_io mem 1}% ${goto 315}${top_io io_perc \1}%]],
+    template6 = [[${color}${top_io name \1} ${goto 170}${top_io pid \1} ${goto 215}${top_io cpu \1}% ${goto 260}${top_io mem 1}% ${goto 315}${top_io io_perc \1}%]],
     
     -- Section header formatting (note only single words are supported)
     template7 = [[${color1}${font1}\1 ${hr}${color}${font}]],
 
-    -- 
-    --template8 = [[]],
+    -- Display the IP network connections
+    template8 = [[${if_up \1}${color2}(\1)${color}\n IP Addr: ${addr \1}\n Up: ${upspeed \1} ${goto 225}Down ${downspeed \1}\n Total Up: ${totalup \1} ${goto 225}Total Down: ${totaldown \1}${else}${color2}(\1)${color}\n Not Connected${endif}]],
 
     -- Common Colors for Graphing template
     template9 = [[${\1 \2 \3, \4 006400 8B0000 -t}]],
@@ -116,81 +116,59 @@ conky.text = [[
 # Generate general system information
 #
 ${template7 System}
-${goto 10}Hostname:${alignr}$nodename - User: ${alignr} ${execi 65000 env | grep LOGNAME | cut -d'=' -f2-}
-${goto 10}Arch:${alignr} ${machine} - Kernel:${alignr} ${kernel}
-${goto 10}CPU:${alignr} ${execi 65000 grep model /proc/cpuinfo | cut -d : -f2 | tail -1 | sed 's/\s//'}
-${goto 10}Operating Sytem: ${alignr} ${sysname} - ${execi 65000 lsb_release -d | awk '{print $2 " " $3}'}
-${goto 10}AC Power: ${acpiacadapter} ${alignr} Battery Charge: ${battery_percent}%
-#${goto 10}Battery Time Remaining: ${alignr}${execi 30 upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep 'time to' | awk '{print $4 " " $5}'}
-${goto 10}Battery Stauts: ${battery_short} ${alignr}Time Remaining: ${battery_time}
-${goto 10}ACPI Temp: ${alignr} ${acpitemp}°C
-${goto 10}Uptime: $uptime ${alignr} Load: ${loadavg}
-${goto 10}Processes: ${processes} ${alignr} Processes Running: ${running_processes}
-#
-# If there is an nvidia device, monitor it (TODO: (dph)should do an if_exists on this)
-#
-${template7 Graphics}
-${color}${goto 10}Model: ${execi 65000 nvidia-smi --query-gpu="name" --format=csv,noheader} ${alignr}Driver Version: ${alignr} ${execi 65000 nvidia-smi --query-gpu="driver_version" --format=csv,noheader}
-${goto 10}Temp: ${nvidia temp}°C ${goto 125}GPU Freq: ${nvidia gpufreq}Mhz ${goto 250}Mem Freq: ${nvidia memfreq}Mhz
-${goto 10} ${template9 nvidiagraph gputemp 20 100} ${goto 125}${template9 nvidiagraph gpuutil 20 100} ${goto 250}${template9 nvidiagraph memutil 20 100}
+Conky Version: ${alignr}${conky_version}
+Hostname: $nodename ${goto 250}User: ${alignr} ${execi 65000 env | grep LOGNAME | cut -d'=' -f2-}
+Arch:${alignr} ${machine} - Kernel:${alignr} ${kernel}
+CPU:${alignr} ${execi 65000 grep model /proc/cpuinfo | cut -d : -f2 | tail -1 | sed 's/\s//'}
+Operating Sytem: ${alignr} ${sysname} - ${execi 65000 lsb_release -d | awk '{print $2 " " $3}'}
+AC Power: ${acpiacadapter} ${alignr} Battery Charge: ${battery_percent}%
+#Battery Time Remaining: ${alignr}${execi 30 upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep 'time to' | awk '{print $4 " " $5}'}
+Battery Stauts: ${battery_short} ${alignr}Time Remaining: ${battery_time}
+ACPI Temp: ${alignr} ${acpitemp}°C
+Uptime: $uptime ${alignr} Load: ${loadavg}
+Processes: ${processes} ${alignr} Processes Running: ${running_processes}
 #
 # General CPU Information
 ${template7 CPU}
-${color2}${goto 10}CPU ${goto 50}Freq ${goto 125}Temp ${goto 200}Usage${color}
-${template0 1 cpu1 2}
-${template0 2 cpu2 3}
-${template0 3 cpu3 4}
-${template0 4 cpu4 5}
-${template0 ALL cpu0 1}
+${color2}Core ${goto 50}Freq ${goto 125}Temp ${goto 200}Usage${color}
+${template0 1 cpu1 Core 0}
+${template0 2 cpu2 Core 1}
+${template0 3 cpu3 Core 2}
+${template0 4 cpu4 Core 3}
+${template0 ALL cpu0 Package id}
 #
 # Memory information
 ${template7 Memory}
-${color2}${goto 10}Max ${goto 55}Used ${goto 100}Free ${goto 150}Swap ${goto 200}Usage${color}
-${goto 10}${memmax} ${goto 55}${mem} ${goto 100}${memfree} ${goto 150}${swapmax} ${goto 200}${memperc}% ${memgraph 10, 150 7171C6 DC143C -l -t}
+${color2}Max ${goto 55}Used ${goto 100}Free ${goto 150}Swap ${goto 200}Usage${color}
+${memmax} ${goto 55}${mem} ${goto 100}${memfree} ${goto 150}${swapmax} ${goto 200}${memperc}% ${memgraph 10, 150 7171C6 DC143C -l -t}
 #
 # Monitor disks
 ${template7 Disks}
-${color2}${goto 10}Device ${goto 75}Read ${goto 150}Write ${goto 250}I/O${color}
-${template5 /dev/sda}
-${template5 /dev/sdb}
-${template5 /dev/sdc}
+${color2}Device ${goto 75}Read ${goto 150}Write ${goto 250}I/O ${color}
+${execpi 60 ls /dev/sd* | cut -c1-8 | uniq -c | cut -c9-17 | sed 's/^/\$\{template5 /;s/$/\}/'}
 #
 # Monitor any mounted file systems
 ${template7 File_Systems}
-${color2}${goto 10}File System ${goto 175}Type ${goto 225}Size ${goto 275}Used ${goto 325}Free 
-${template4 /}
-${template4 /home}
-${template4 /ISO}
-${template4 /media/dph/DPH}
-${template4 /media/dph/SSD\ Backup}
-#${color}${alignr} ${execp /home/dph/disks.sh}
+${execpi 6000 'df -h -t ext4 -t vfat -t fuse.sshfs -t nfs -t exfat -t fuseblk --output=target,fstype,size,used,avail,pcent'}
 #
-# Monitor any connected networks -- these are not autodiscovred
+# Monitor any connected networks
 ${template7 Network}
-${color}${goto 10}Gateway: ${gw_ip} ${goto 225}DNS Server: ${nameserver}
+${color}FQDN: ${execpi 60 hostname -f}
+${color}Gateway: ${gw_ip} ${goto 225}DNS Server: ${nameserver}
+${execpi 60 cat /proc/net/dev | grep -e 'en' -e 'wl'| cut --fields=-1 --delimiter=':' | sed 's/^/\$\{template8 /;s/$/\}/'}
 #
-# If connected via wireless, monitor wlp2s0 (default)
-${if_up wlp2s0}${color}${goto 10}Wireless (wlp2s0):${goto 130}${addrs wlp2s0} ${goto 225}SSID: ${wireless_essid wlp2s0}
-${goto 10}Mode: ${wireless_mode wlp2s0} ${goto 100}BitRate: ${wireless_bitrate wlp2s0} ${goto 225}Link Quality: ${wireless_link_qual_perc wlp2s0}%
-${goto 10}Upload: ${upspeed wlp2s0} ${alignr} ${goto 225}Download: ${downspeed wlp2s0}
-${goto 10}${template9 upspeedgraph wlp2s0 20 150} ${goto 225}${template9 downspeedgraph wlp2s0 20 125}${endif}
-${if_up enx001fb52699ab}${color}${goto 10}Hub Wired Mode (enx001fb52699ab) ${goto 225}${addrs enx001fb52699ab}
-${goto 10}Upload: ${upspeed enx001fb52699ab} ${goto 225}Download ${downspeed enx001fb52699ab}
-${goto 10}${template9 upspeedgraph enx001fb52699ab 20 150} ${goto 225}${template9 downspeedgraph enx001fb52699ab 20 125}${endif}
-${if_up enp0s31f6}${color}${goto 10}Wired Mode (enp0s31f6) ${goto 225}${addrs enp0s31f6}
-${goto 10}Upload: ${upspeed enp0s31f6} ${goto 225}Download ${downspeed enp0s31f6}
-${goto 10}${template9 upspeedgraph enp0s31f6 20 150} ${goto 225}${template9 downspeedgraph enp0s31f6 20 125}${endif}
+# If connected via wireless output additional information (NB: this takes advantage of the fact that wireless interfaces start with 'w')
+${execpi 60 cat /proc/net/dev | grep -e 'wl'| cut --fields=-1 --delimiter=':' | sed 's/^/\$\{template4 /;s/$/\}/'}
+#${template9 upspeedgraph wlp1s0 20 150} ${goto 225}${template9 downspeedgraph wlp1s0 20 125}${endif}
 #
 # Show vnstats for all the configured networks -- these are not autodiscovred
 ${color1}${font1}Total Network Traffic via vnstat $hr ${color2}${font}
-${goto 10}Interface${goto 125}Today${goto 175}Yesterday${goto 250}Week${goto 300}Month
-${template1 wlp2s0}
-${template1 enx001fb52699ab}
-${template1 enp0s31f6}
+Interface${goto 125}Today${goto 175}Yesterday${goto 250}Week${goto 300}Month
+${execpi 600 cat /proc/net/dev | grep -e 'en' -e 'wl'| cut --fields=-1 --delimiter=':' | sed 's/^/\$\{template1 /;s/$/\}/'}
 #
 # Show the top 5 processes for CPU, Memory and I/O
 ${color1}${font1}Top CPU Processes $hr${color2}${font}
-${goto 10}NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
+NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
 ${template2 1}
 ${template2 2}
 ${template2 3}
@@ -199,7 +177,7 @@ ${template2 5}
 ${template2 6}
 ${template2 7}
 ${color1}${font1}Top Memory Processes $hr${color2}${font}
-${goto 10}NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
+NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
 ${template3 1}
 ${template3 2}
 ${template3 3}
@@ -208,7 +186,7 @@ ${template3 5}
 ${template3 6}
 ${template3 7}
 ${color1}${font1}Top I/O Processes $hr${color2}${font}
-${goto 10}NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
+NAME ${goto 195}PID ${goto 235}CPU ${goto 280}MEM ${goto 330}I/O
 ${template6 1}
 ${template6 2}
 ${template6 3}
