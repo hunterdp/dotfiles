@@ -29,8 +29,8 @@ conky.config = {
     update_interval_on_battery = 30.0,      -- When on battery power don't sample as often
    
     default_color = 'white',                -- Use for default text
-    color1 = 'gold',                        -- Used for headers
-    color2 = 'bisque',                      -- Used for headers within sections
+    color1 = 'red',                        -- Used for headers
+    color2 = 'gold',                      -- Used for headers within sections
     default_outline_color = 'grey',
     default_shade_color = 'grey',
 
@@ -156,10 +156,10 @@ ${template7 Network}
 ${color}FQDN: ${execpi 60 hostname -f}
 ${color}Gateway: ${gw_ip} ${goto 225}DNS Server: ${nameserver}
 ${execpi 60 cat /proc/net/dev | grep -e 'en' -e 'wl'| cut --fields=-1 --delimiter=':' | sed 's/^/\$\{template8 /;s/$/\}/'}
-#
-# If connected via wireless output additional information (NB: this takes advantage of the fact that wireless interfaces start with 'w')
 ${execpi 60 cat /proc/net/dev | grep -e 'wl'| cut --fields=-1 --delimiter=':' | sed 's/^/\$\{template4 /;s/$/\}/'}
 #${template9 upspeedgraph wlp1s0 20 150} ${goto 225}${template9 downspeedgraph wlp1s0 20 125}${endif}
+${execpi 60 cat /proc/net/dev | grep -e 'tun'| cut --fields=-1 --delimiter=':' | sed 's/^/\$\{template8 /;s/$/\}/'}
+${execpi 60 cat /proc/net/dev | grep -e 'vmnet'| cut --fields=-1 --delimiter=':' | sed 's/^/\$\{template8 /;s/$/\}/'}
 #
 # Show vnstats for all the configured networks -- these are not autodiscovred
 ${color1}${font1}Total Network Traffic via vnstat $hr ${color2}${font}
