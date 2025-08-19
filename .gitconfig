@@ -1,0 +1,25 @@
+# Global git configuration file
+#
+[user]
+	name = David P Hunter
+	email = dph@alumni.neu.edu
+[init]
+	# Sets the default branch name for new repositories to "main"
+	defaultBranch = main
+[core]
+	# Sets the default text editor used by Git commands.
+	editor = vi --wait
+	# Excludes the .DS_Store file (common on macOS) from all projects.
+	excludesfile = ~/.gitignore_global
+
+[alias]
+	# Creates short commands (aliases) for common operations.
+	# Example: `git st` instead of `git status`
+	st = status
+	co = checkout
+	br = branch
+	ci = commit
+	unstage = restore --staged
+	
+	# A prettier, more compact log format.
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative

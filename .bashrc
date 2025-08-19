@@ -98,15 +98,14 @@ alias dh='df -h -x tmpfs'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
+# Put all alias additions into a separate file ~/.bash_aliases.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-# enable programmable completion features (you don't need to enable
+# Enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
@@ -117,22 +116,73 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# add the pin bin path
-export PATH=/home/dph/pin:$PATH
-# mpich command path
-export PATH=/net/mpich/mpich-install/bin:$PATH
+# If the mpich mount is mounted, then add it to the path
+if [ -d /net/mpich ]; then
+  export PATH=/net/mpich/mpich-install/bin:$PATH
+fi
 
-# >>> conda initialize >>>
+# Add the ~/.local/bin to path if it exists
+if [ -d $HOME/.local/bin ]; then
+  export PATH=/home/dph/.local/bin:$PATH
+fi
+
+# Add CUDA  paths if installed
+if [ -f /usr/local/cuda/bin/nvcc ]; then
+  export PATH=/usr/local/cuda-12.2/bin${PATH:+:${PATH}}
+  export LD_LIBRARY_PATH=usr/local/cuda-12.3//lib64/${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}}
+  export CUDA_HOME=/usr/local/cuda
+  export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+fi
+
+# conda initialize if installed
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/dph/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/dph/miniconda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/dph/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/dph/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/home/dph/miniconda/etc/profile.d/conda.sh" ]; then
+      . "/home/dph/miniconda/etc/profile.d/conda.sh"  # commented out by conda initialize  # commented out by conda initialize  # commented out by conda initialize
     else
-        export PATH="/home/dph/miniconda3/bin:$PATH"
+      export PATH="/home/dph/miniconda/bin:$PATH"  # commented out by conda initialize  # commented out by conda initialize  # commented out by conda initialize
+    fi
+fi
+unset __conda_setup
+
+# Setup cargo if installed
+if [ -d $HOME/.cargo ]; then
+ . "$HOME/.cargo/env"
+# Add .cargo to $PATH\nexport PATH="~/.cargo/bin:$PATH"
+fi
+
+# Display xxxfetch information on the terminal 
+if [ -f /usr/bin/fastfetch ]; then
+  /usr/bin/fastfetch
+elif [ -f /usr/bin/neofetch ]; then
+  /usr/bin/neofetch
+fi
+
+# Enable command line completion for kubectl
+if [ -f /usr/local/bin/kubectl ]; then
+  source <(kubectl completion bash)
+fi
+
+# If brew package manager installed
+if [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/miniconda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/miniconda/etc/profile.d/conda.sh" ]; then
+        . "/opt/miniconda/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/miniconda/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
