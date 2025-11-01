@@ -1,0 +1,21 @@
+# Global settings for all hosts
+Host *
+  # Apply these settings to every host unless overridden below
+  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+  ForwardAgent yes
+  ForwardX11 yes
+  Compression yes
+
+# ---
+# Host-specific settings
+# These will use the global settings above AND add their own.
+# ---
+
+Host github
+  HostName github.com
+  User hunterdp
+  IdentityFile ~/.ssh/id_rsa
+  IdentitiesOnly yes
+
