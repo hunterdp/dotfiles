@@ -19,3 +19,4 @@
 # Ignore any API keys
 ./.bash_apikeys
 
+./ssh_config
