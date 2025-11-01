@@ -1,0 +1,21 @@
+# gitignore dotfiles.
+
+# Generic types to ignore
+*.log
+*.out
+*.aux
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.csv
+./.vscode/*
+./.vscode/.*
+./.vscode/*.*
+./data/*
+./data/*.*
+*.code-workspace
+
+
+# Ignore any API keys
+./.bash_apikeys
+
