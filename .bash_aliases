@@ -1,9 +1,13 @@
 # Simple command alias that should be the same across all Un*x/*BSD/Linux
 alias df='df -h'
+alias dh='df -h -x tmpfs'
 alias v='vi'
 alias vi='vim'
 alias vis='sudo vim'
 alias lst='ls -tl'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
 
 # docker ailias
 alias dcu='docker compose up $1'

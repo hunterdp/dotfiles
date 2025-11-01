@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# ----------------------------------------------------------------------
+# .bashrc_set_promt.sh
+#   A script to set a two-line bash prompt with colors.
+# ----------------------------------------------------------------------
+
+# Detect colour capability and set colors accordingly
+if tput colors &>/dev/null && [ "$(tput colors)" -ge 8 ]; then
+    # Use tput to fetch the proper SGR codes for the current TERM
+    COLOR_USERHOST=$(tput setaf 6)   # cyan
+    COLOR_CWD=$(tput setaf 3)        # yellow
+    COLOR_PROMPT=$(tput setaf 5)     # magenta
+    COLOR_RESET=$(tput sgr0)         # reset all attributes
+else
+    # No colour support – fall back to empty strings
+    COLOR_USERHOST=""
+    COLOR_CWD=""
+    COLOR_PROMPT=""
+    COLOR_RESET=""
+fi
+
+# Build the two-line PS1 prompt:
+#   \u – username
+#   \h – hostname (up to the first dot)
+#   \w – current working directory, $HOME shown as ~
+#   \n – newline (creates the second line)
+#   \$ – $ for normal users, # for root
+#
+# Color codes are wrapped in \[ and \] so bash knows they are non-printing.
+PS1="\[${COLOR_USERHOST}\]┌──(\u@\h)\[${COLOR_RESET}\]-\[${COLOR_CWD}\][\w]\[${COLOR_RESET}\]\n└─\[${COLOR_PROMPT}\]\$ \[${COLOR_RESET}\]"
+
+export PS1
