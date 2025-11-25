@@ -32,10 +32,41 @@ The `neofetch` configuration is customized to display the following information:
 *   **Public IP:** The public IP is fetched from `http://ident.me`.
 *   **Color Blocks:** Color blocks are disabled.
 
-## Installation
+## Windows Terminal Configuration
 
-**Warning:** Use these dotfiles at your own risk. Some of them might be specific to my setup.
+Custom configuration for Windows PowerShell and Command Prompt (cmd.exe) to mimic the Kali Linux style layout.
 
-## License
+**Preview:**
+```text
+┌──(HOSTNAME) C:\Current\Path
+└─$
+```
 
-This project is licensed under the terms of the LICENSE file.
+### PowerShell Prompt
+Location: windows/Setup-Prompt.ps1
+
+This script configures the current user's PowerShell profile to use the custom 2-line prompt with specific coloring (Dark Cyan for path, Dark Magenta for hostname).
+
+### Installation: Run the setup script from the repository root:
+```code
+.\windows\Setup-Prompt.ps1
+. $PROFILE
+```
+
+Note: This script enforces UTF-8 encoding to ensure the box-drawing characters (┌, └) render correctly in PowerShell 5.1.
+
+### Command Prompt (CMD)
+Location: windows/Setup-Prompt.bat
+
+This batch file sets a permanent Windows Environment Variable (PROMPT) using ANSI escape codes to achieve the colored output in the standard command shell.
+
+```code Installation: Run the batch file once:
+.\windows\Setup-Prompt.bat
+```
+
+Note: You must restart your Command Prompt window for the changes to take effect.
+
+Requirements
+Font: A Nerd Font or modern monospace font (e.g., Cascadia Code, Consolas) is required to see the glyphs correctly.
+
+Terminal: Windows Terminal (recommended), PowerShell 5.1+, or CMD on Windows 10/11.
