@@ -42,31 +42,75 @@ Custom configuration for Windows PowerShell and Command Prompt (cmd.exe) to mimi
 └─$
 ```
 
-### PowerShell Prompt
-Location: windows/Setup-Prompt.ps1
+### PowerShell Prompt (PowerShell 5.1 & 7+)
+**Location:** `windows/Setup-Prompt-Clean.ps1`
 
-This script configures the current user's PowerShell profile to use the custom 2-line prompt with specific coloring (Dark Cyan for path, Dark Magenta for hostname).
+This script configures **both PowerShell 5.1 and PowerShell 7+** profiles simultaneously:
+- Creates a shared prompt function file in `AppData\Local\PowerShellPrompt\prompt.ps1`
+- Updates profile files in local Documents folder to source the shared configuration
+- Uses Unicode escape sequences for box-drawing characters (avoiding UTF-8 encoding issues)
+- Automatically creates all necessary directories
 
-### Installation: Run the setup script from the repository root:
-```code
-.\windows\Setup-Prompt.ps1
-. $PROFILE
+**Colors:**
+- Dark Cyan for box-drawing and path
+- Dark Magenta for username@hostname
+
+**Installation:**
+
+Run the setup script from PowerShell (either version):
+```powershell
+.\windows\Setup-Prompt-Clean.ps1
 ```
 
-Note: This script enforces UTF-8 encoding to ensure the box-drawing characters (┌, └) render correctly in PowerShell 5.1.
+Then close and reopen PowerShell (the profile loads automatically on startup).
+
+**What it does:**
+1. Creates `AppData\Local\PowerShellPrompt\prompt.ps1` with the shared prompt function
+2. Creates/updates `Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1` (PS 5.1)
+3. Creates/updates `Documents\PowerShell\Microsoft.PowerShell_profile.ps1` (PS 7+)
+4. Both profiles dot-source the shared prompt file
+
+**Benefits:**
+- Single source of truth for prompt configuration
+- Works in both PowerShell versions automatically
+- Easy to customize (edit one file, affects both versions)
+- Avoids OneDrive sync conflicts by storing prompt in AppData\Local
+- Bypasses Windows Security/Controlled Folder Access restrictions
+
+**Troubleshooting:**
+
+If you get an "Unauthorized changes blocked" popup:
+1. Open **Windows Security** → **Virus & threat protection**
+2. Click **Manage ransomware protection**
+3. Click **Controlled folder access**
+4. Click **Allow an app through Controlled folder access**
+5. Add PowerShell executables:
+   - `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe` (PS 5.1)
+   - `C:\Program Files\PowerShell\7\pwsh.exe` (PS 7+, if installed)
+
+Alternatively, the script stores the prompt file in `AppData\Local` which is typically not protected by Controlled Folder Access.
 
 ### Command Prompt (CMD)
-Location: windows/Setup-Prompt.bat
+**Location:** `windows/Setup-Prompt.bat`
 
 This batch file sets a permanent Windows Environment Variable (PROMPT) using ANSI escape codes to achieve the colored output in the standard command shell.
 
-```code Installation: Run the batch file once:
+**Installation:**
+
+Run the batch file once:
+```cmd
 .\windows\Setup-Prompt.bat
 ```
 
-Note: You must restart your Command Prompt window for the changes to take effect.
+**Note:** You must close and reopen Command Prompt for changes to take effect.
 
-Requirements
-Font: A Nerd Font or modern monospace font (e.g., Cascadia Code, Consolas) is required to see the glyphs correctly.
+### Requirements
 
-Terminal: Windows Terminal (recommended), PowerShell 5.1+, or CMD on Windows 10/11.
+**Font:** A Nerd Font or modern monospace font (e.g., Cascadia Code, Consolas) is required to see the box-drawing characters correctly.
+
+**Terminal:** Windows Terminal (recommended), PowerShell 5.1+, or CMD on Windows 10/11.
+
+**Execution Policy:** The script will work with `LocalMachine` or `CurrentUser` set to `RemoteSigned` or `Unrestricted`. Check with:
+```powershell
+Get-ExecutionPolicy -List
+```
